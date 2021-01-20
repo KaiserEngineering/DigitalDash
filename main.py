@@ -147,32 +147,36 @@ class GUI(App):
             if not ret:
                 Logger.error(msg)
             self.first_iteration = False
-        (my_callback, priority, data) = (None, 0, Data_Source.start(app=self, pids=self.pids))
+        try:
+            (my_callback, priority, data) = (None, 0, Data_Source.start(app=self, pids=self.pids))
 
-        dynamic_change = False
-        # Check dynamic gauges before any alerts in case we make a change
-        for dynamic in self.dynamic_callbacks:
-            if self.current == dynamic.index:
-                continue
-            my_callback = self.check_callback(dynamic, data)
-
-            if my_callback:
-                self.change(self, my_callback)
-                dynamic_change = True
-                break
-
-        # Check our alerts if no dynamic changes have occured
-        if not dynamic_change:
-            for callback in self.alert_callbacks:
-                my_callback = self.check_callback(callback, data)
+            dynamic_change = False
+            # Check dynamic gauges before any alerts in case we make a change
+            for dynamic in self.dynamic_callbacks:
+                if self.current == dynamic.index:
+                    continue
+                my_callback = self.check_callback(dynamic, data)
 
                 if my_callback:
-                    if callback.parent is None:
-                        self.alerts.add_widget(my_callback)
-                elif callback.parent:
-                    self.alerts.remove_widget(callback)
+                    self.change(self, my_callback)
+                    dynamic_change = True
+                    break
 
-            self.update_values(data)
+            # Check our alerts if no dynamic changes have occured
+            if not dynamic_change:
+                for callback in self.alert_callbacks:
+                    my_callback = self.check_callback(callback, data)
+
+                    if my_callback:
+                        if callback.parent is None:
+                            self.alerts.add_widget(my_callback)
+                    elif callback.parent:
+                        self.alerts.remove_widget(callback)
+
+                self.update_values(data)
+        except:
+            Logger.error( "No PIDs returned, resetting PID stream" )
+            (ret, msg) = Data_Source.update_requirements(self, self.pid_byte_code, self.pids)
 
 if __name__ == '__main__':
     Logger.info( 'GUI: Running version: %s'%__version__ )
