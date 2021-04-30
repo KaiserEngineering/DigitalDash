@@ -61,16 +61,16 @@ class Base:
         for labelConfig in themeConfig["labels"]:
             labelConfig["pid"] = ARGS["pid"]
 
-            # FIXME
-            # This is a bandaid on the issue of spacing for linear gauges
-            if ARGS['skipLinearMinMax'] and themeConfig["module"] and \
-              labelConfig["default"] in ['Min: ', 'Max: ']:
-                Logger.info(
-                  'GUI: Received skipLinearMinMax flag, \
-                    removing Min/Max labels from Linear gauges'
-                )
-                continue
-            # FIXME
+            # # FIXME
+            # # This is a bandaid on the issue of spacing for linear gauges
+            # if ARGS['skipLinearMinMax'] and themeConfig["module"] and \
+            #   labelConfig["default"] in ['Min: ', 'Max: ']:
+            #     Logger.info(
+            #       'GUI: Received skipLinearMinMax flag, \
+            #         removing Min/Max labels from Linear gauges'
+            #     )
+            #     continue
+            # # FIXME
 
             labelConfig = {**ARGS, **labelConfig}
 
