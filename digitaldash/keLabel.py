@@ -3,6 +3,7 @@ from kivy.uix.label import Label
 from kivy.logger import Logger
 from static.constants import KE_PID
 from static.constants import PID_UNIT_LABEL
+from digitaldash.needles.linear import NeedleLinear as Linear
 
 # pylint: disable=too-many-instance-attributes
 
@@ -37,6 +38,7 @@ class KELabel(Label):
         self.pid = args.get("pid", None)
         self.decimals = "2"  # Default to 2 and update later if a value is provided
         self.unitString = ""
+        self.gauge = args.get("gauge", None)
 
         if self.pid:
             self.unit = self.pid.unitLabel
@@ -70,6 +72,19 @@ class KELabel(Label):
             self.text = self.default
 
         self.setPos(**args)
+
+        # Bind our label position to the needle position
+        # this is needed for linear so that the labels match the linear
+        # needles size
+        labelObj = self
+        def test(self, instance):
+            # NOTE: `self` is the needle object not the label!
+            labelObj.pos = (args['pos'][0] * self.width, args['pos'][1] * self.height)
+        if self.gauge:
+            if self.gauge.face:
+                self.gauge.face.bind(width=test)
+            elif self.gauge.needle:
+                self.gauge.needle.bind(width=test)
 
     def setPos(self, **args):
         """This allows the position code to be overwritten, we use this

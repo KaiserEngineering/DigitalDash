@@ -43,7 +43,7 @@
     },
     "1": {
       "name": "Boost",
-      "enabled": true,
+      "enabled": false,
       "default": 0,
       "background": "Blue Purple Gradient.png",
       "alerts": [],
